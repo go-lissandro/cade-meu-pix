@@ -55,6 +55,9 @@ def test_fluxo_cliente_cobranca_pagamento_dashboard(client):
     r = client.get("/api/v1/charges/", headers=headers)
     assert r.status_code == 200, r.text
     assert r.json()["total"] == 1
+    item = r.json()["items"][0]
+    assert item["client_name"] == "Padaria do Zé"
+    assert float(item["amount_paid"]) == 0.0
 
     # Pagamento parcial e depois o restante
     url_pag = f"/api/v1/charges/{cobranca['id']}/payments/"
@@ -77,6 +80,13 @@ def test_fluxo_cliente_cobranca_pagamento_dashboard(client):
     detalhe = client.get(f"/api/v1/charges/{cobranca['id']}", headers=headers).json()
     assert detalhe["status"] == "paid"
     assert len(detalhe["payments"]) == 2
+    assert float(detalhe["amount_paid"]) == 150.0
+
+    venc = date.fromisoformat(cobranca["due_date"])
+    r = client.get(f"/api/v1/charges/calendar?year={venc.year}&month={venc.month}", headers=headers)
+    assert r.status_code == 200
+    dia = r.json()[venc.isoformat()][0]
+    assert dia["client_name"] == "Padaria do Zé" and float(dia["amount_paid"]) == 150.0
 
     resumo = client.get("/api/v1/dashboard/summary", headers=headers).json()
     assert resumo["total_paid"] == 1

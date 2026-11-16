@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "Cobranças SaaS"
     DEBUG: bool = False
     API_V1_STR: str = "/api/v1"
+    # Origens liberadas no CORS, separadas por vírgula (ex.: "http://localhost:8080,https://app.exemplo.com")
+    CORS_ORIGINS: str = "*"
 
     # Database
     DATABASE_URL: str

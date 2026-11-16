@@ -1,6 +1,6 @@
 from datetime import datetime, date, timezone
 from uuid import UUID
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 from app.models.charge import Charge
 from app.repositories.base import BaseRepository
 
@@ -41,7 +41,7 @@ class ChargeRepository(BaseRepository[Charge]):
         query = (
             self.db.query(Charge)
             .filter(Charge.user_id == user_id)
-            .options(joinedload(Charge.client))
+            .options(joinedload(Charge.client), selectinload(Charge.payments))
         )
         if status:
             query = query.filter(Charge.status == status)
@@ -86,7 +86,7 @@ class ChargeRepository(BaseRepository[Charge]):
         end = date(year, month, last_day)
         return (
             self.db.query(Charge)
-            .options(joinedload(Charge.client))
+            .options(joinedload(Charge.client), selectinload(Charge.payments))
             .filter(
                 Charge.user_id == user_id,
                 Charge.due_date >= start,
