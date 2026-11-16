@@ -3,7 +3,7 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False, extra="ignore")
 
     # App
     APP_NAME: str = "Cobranças SaaS"

@@ -13,12 +13,7 @@ from app.models.message_log import MessageLog
 def send_whatsapp_message(self, charge_id: str, attempt: int = 1):
     from app.integrations.whatsapp import WhatsAppClient
     from app.utils.message_builder import build_whatsapp_message
-    from app.repositories.charge_repository import ChargeRepository
-
     with get_db_context() as db:
-        repo = ChargeRepository(db)
-        charge = repo.get_with_relations(charge_id, charge.user_id) if False else None
-
         # Busca direto pela primary key (sem filtro user_id — task interna)
         from app.models.charge import Charge
         from uuid import UUID

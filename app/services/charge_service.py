@@ -6,7 +6,7 @@ from app.models.charge import Charge
 from app.models.resend_config import ResendConfig
 from app.repositories.charge_repository import ChargeRepository
 from app.repositories.client_repository import ClientRepository
-from app.schemas.charge import ChargeCreate, ChargeUpdate
+from app.schemas.charge import ChargeCreate, ChargeUpdate, ChargeOut
 from app.utils.pagination import PaginatedResponse, PaginationParams
 
 
@@ -65,7 +65,11 @@ class ChargeService:
             skip=params.skip,
             limit=params.limit,
         )
-        return PaginatedResponse(items=items, total=total, **params.dict())
+        return PaginatedResponse(
+            items=[ChargeOut.model_validate(c) for c in items],
+            total=total,
+            **params.model_dump(),
+        )
 
     def get_or_404(self, charge_id: UUID, user_id: UUID) -> Charge:
         charge = self.repo.get_with_relations(charge_id, user_id)

@@ -3,6 +3,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Literal
 from pydantic import BaseModel, field_validator
+from app.schemas.payment import PaymentOut
 
 
 ChargeStatus = Literal["pending", "partially_paid", "paid", "canceled", "overdue"]
@@ -59,5 +60,4 @@ class ChargeOut(BaseModel):
 
 
 class ChargeDetailOut(ChargeOut):
-    from app.schemas.payment import PaymentOut
-    payments: list["PaymentOut"] = []
+    payments: list[PaymentOut] = []

@@ -51,3 +51,31 @@ backend/
 ├── tests/
 ├── Dockerfile
 └── pyproject.toml
+## Como rodar
+
+```bash
+cd app
+cp .env.example .env        # ajuste SECRET_KEY e credenciais
+docker compose up --build   # Postgres, Redis, API, worker e beat
+```
+
+- API: http://localhost:8000 · documentação: http://localhost:8000/docs
+- Sem Docker: `pip install -e ".[dev]"` e, a partir da raiz do repositório, `uvicorn app.main:app --reload`
+
+## Testes
+
+```bash
+cd app
+pip install -e ".[dev]"
+python -m pytest
+```
+
+## Migrations
+
+O diretório `alembic/` só tem o `env.py`. Para gerar a primeira migration:
+
+```bash
+alembic init alembic        # cria alembic.ini e script.py.mako (mantenha o env.py atual)
+alembic revision --autogenerate -m "initial schema"
+alembic upgrade head
+```
