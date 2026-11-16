@@ -36,3 +36,11 @@ class Charge(Base, TimestampMixin):
     payments = relationship("Payment", back_populates="charge", cascade="all, delete-orphan")
     message_logs = relationship("MessageLog", back_populates="charge", cascade="all, delete-orphan")
     resend_config = relationship("ResendConfig", back_populates="charge", uselist=False, cascade="all, delete-orphan")
+
+    @property
+    def client_name(self) -> str | None:
+        return self.client.name if self.client else None
+
+    @property
+    def amount_paid(self) -> Decimal:
+        return sum((p.amount_paid for p in self.payments), Decimal("0"))

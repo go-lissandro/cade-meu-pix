@@ -1,3 +1,9 @@
+import os
+
+# Configuração mínima para os testes rodarem sem .env
+os.environ.setdefault("DATABASE_URL", "postgresql+psycopg://teste:teste@localhost:5432/teste")
+os.environ.setdefault("SECRET_KEY", "chave-de-teste")
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine

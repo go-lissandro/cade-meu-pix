@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-cobrancas}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-senha}
+      POSTGRES_DB: cobrancas_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: .
+      target: production
+    env_file: .env
+    environment: &docker-env
+      DATABASE_URL: postgresql+psycopg://${DB_USER:-cobrancas}:${DB_PASSWORD:-senha}@postgres:5432/cobrancas_db
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on: [postgres, redis]
+
+  worker:
+    build:
+      context: .
+      target: production
+    env_file: .env
+    environment: *docker-env
+    command: celery -A app.workers.celery_app worker -Q whatsapp,email,resend,status --loglevel=info
+    depends_on: [postgres, redis]
+
+  beat:
+    build:
+      context: .
+      target: production
+    env_file: .env
+    environment: *docker-env
+    command: celery -A app.workers.celery_app beat --loglevel=info
+    depends_on: [redis]
+
+volumes:
+  pgdata:

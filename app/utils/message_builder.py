@@ -1,3 +1,5 @@
+from html import escape
+
 from app.models.charge import Charge
 
 
@@ -20,11 +22,11 @@ def build_email_html(charge: Charge) -> str:
     return f"""
     <html><body style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
       <h2>Lembrete de cobrança</h2>
-      <p>Olá, <strong>{charge.client.name}</strong>!</p>
+      <p>Olá, <strong>{escape(charge.client.name)}</strong>!</p>
       <p>Você possui uma cobrança em aberto:</p>
       <table style="border-collapse:collapse;width:100%">
         <tr><td style="padding:8px;border:1px solid #ddd"><strong>Descrição</strong></td>
-            <td style="padding:8px;border:1px solid #ddd">{charge.description}</td></tr>
+            <td style="padding:8px;border:1px solid #ddd">{escape(charge.description)}</td></tr>
         <tr><td style="padding:8px;border:1px solid #ddd"><strong>Valor</strong></td>
             <td style="padding:8px;border:1px solid #ddd">{valor}</td></tr>
         <tr><td style="padding:8px;border:1px solid #ddd"><strong>Vencimento</strong></td>

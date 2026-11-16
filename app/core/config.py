@@ -3,12 +3,14 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False, extra="ignore")
 
     # App
     APP_NAME: str = "Cobranças SaaS"
     DEBUG: bool = False
     API_V1_STR: str = "/api/v1"
+    # Origens liberadas no CORS, separadas por vírgula (ex.: "http://localhost:8080,https://app.exemplo.com")
+    CORS_ORIGINS: str = "*"
 
     # Database
     DATABASE_URL: str
